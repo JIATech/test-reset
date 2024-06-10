@@ -46,6 +46,8 @@ def has_reset_condition(window_title, number):
 def handle_reset(window_title):
     """Perform the reset actions."""
     print(f"Resetting for window: {window_title}")
+    window = gw.getWindowsWithTitle(window_title)[0]
+    window.activate()
     pydirectinput.press('enter')
     print("Pressed Enter")
     time.sleep(2) 
