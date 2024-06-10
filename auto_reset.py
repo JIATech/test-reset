@@ -44,9 +44,11 @@ while True:
     print(window_title)
     
     # check if window_title contain certain keyword then do something
-    def reset_condition_in_window_title(window_title):
-        levels = ['Level: {}'.format(i) for i in range(380, 401)]
-        if any(level in window_title for level in levels):
+    def reset_condition_in_window_title(window_title, number):
+        return str(number) in window_title
+        
+    def reset_condition(number):
+        if reset_condition_in_window_title(window_title, number):
             # Press enter
             pydirectinput.press('enter')
             print("Pressed enter")
@@ -72,14 +74,15 @@ while True:
             print("Pressed enter again")
 
             # Sleep for a bit
-            for i in range(60, 0, -1):
+            for i in range(15, 0, -1):
                 print(i)
                 time.sleep(1)
         else:
             print("No reset condition found")
             # Sleep for a bit
-            for i in range(60, 0, -1):
+            for i in range(5, 0, -1):
                 print(i)
                 time.sleep(1)
             
-    reset_condition_in_window_title(window_title)
+    for number in range(380, 401):
+        reset_condition(number)
