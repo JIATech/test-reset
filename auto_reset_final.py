@@ -70,6 +70,7 @@ while True:
     for window_title in get_window_title_by_keywords(['Character', 'Level']):
         for number in range(380, 401):  # Adjust range as needed
             if has_reset_condition(window_title, number):
+                pyperclip.copy("/")
                 handle_reset(window_title)
                 break  # Move on to the next window after a reset
 
