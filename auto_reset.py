@@ -74,7 +74,7 @@ while True:
             print("Pressed enter again")
 
             # Sleep for a bit
-            for i in range(15, 0, -1):
+            for i in range(5, 0, -1):
                 print(i)
                 time.sleep(1)
         else:
