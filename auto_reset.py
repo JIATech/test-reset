@@ -40,15 +40,18 @@ while True:
         matching_windows = [window for window in windows if all(keyword.lower() in window.title.lower() for keyword in keywords)]
         return [window.title for window in matching_windows]
 
-    window_title = get_window_title_by_keywords(['Character', 'Level'])
-    print(window_title)
+    window_titles = get_window_title_by_keywords(['Character', 'Level'])
+    print(window_titles)
     
     # check if window_title contain certain keyword then do something
-    def reset_condition_in_window_title(window_title, number):
-        return str(number) in window_title
-        
+    def reset_condition_in_window_title(window_titles, number):
+        for title in window_titles:
+            if str(number) in title:
+                return True
+        return False
+    
     def reset_condition(number):
-        if reset_condition_in_window_title(window_title, number):
+        if reset_condition_in_window_title(window_titles, number):
             # Press enter
             pydirectinput.press('enter')
             print("Pressed enter")
@@ -85,4 +88,6 @@ while True:
                 time.sleep(1)
             
     for number in range(380, 401):
-        reset_condition(number)
+        window_titles = get_window_title_by_keywords(['Character', 'Level'])
+        reset_condition(window_titles, number)
+        print(window_titles)
