@@ -81,10 +81,23 @@ def handle_master_reset(window_title):
 
 def handle_reset(window_title):
     """Perform the reset actions."""
-    if (has_master_reset_condition(window_title, range(10, 51)) == False):
+    if not has_master_reset_condition(window_title, range(10, 51)):
         print(f"Trayendo la ventana al frente.")
         window = gw.getWindowsWithTitle(window_title)[0]
         window.activate()
+        pydirectinput.press('enter')
+        print("Se presiona Enter")
+        time.sleep(2) 
+        print("Se esperan 2 segundos...")
+        pydirectinput.keyDown('ctrl')
+        pydirectinput.press('v')
+        pydirectinput.keyUp('ctrl')
+        print("Se pega '/' para practicidad.")
+        print("Se escribe 'mreset'...")
+        for char in "mreset":
+            pydirectinput.press(char)
+        pydirectinput.press('enter')
+        print("Se presiona Enter de nuevo.")
         pydirectinput.press('enter')
         print("Se presiona Enter")
         time.sleep(2) 
@@ -130,7 +143,7 @@ while True:
                 print()
                 print(f"Trayendo ventana al frente")
                 print()
-                print(f"Copiando '/' al clipboard de nuevo.../n ")
+                print(f"Copiando '/' al clipboard de nuevo...")
                 print(f"Por si copiaste algo sin vergüenza.")
                 pyperclip.copy("/")
                 handle_reset(window_title)
