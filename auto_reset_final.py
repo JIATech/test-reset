@@ -65,10 +65,12 @@ def handle_master_reset(window_title):
     print(f"Trayendo la ventana al frente.")
     window = gw.getWindowsWithTitle(window_title)[0]
     window.activate()
-    pydirectinput.press('enter')
+    pydirectinput.keyDown('enter')
     print("Se presiona Enter")
-    time.sleep(2) 
-    print("Se esperan 2 segundos...")
+    time.sleep(0.5) 
+    pydirectinput.keyUp('enter')
+    print("Se esperan 1 segundo...")
+    time.sleep(1)
     pydirectinput.keyDown('ctrl')
     pydirectinput.press('v')
     pydirectinput.keyUp('ctrl')
@@ -76,8 +78,12 @@ def handle_master_reset(window_title):
     print("Se escribe 'mreset'...")
     for char in "mreset":
         pydirectinput.press(char)
-    pydirectinput.press('enter')
     print("Se presiona Enter de nuevo.")
+    pydirectinput.keyDown('enter')
+    time.sleep(0.5)
+    pydirectinput.keyUp('enter')
+    print("Se presiona Enter de nuevo.")
+    time.sleep(0.5)
 
 def handle_reset(window_title):
     """Perform the reset actions."""
@@ -85,10 +91,12 @@ def handle_reset(window_title):
         print(f"Trayendo la ventana al frente.")
         window = gw.getWindowsWithTitle(window_title)[0]
         window.activate()
-        pydirectinput.press('enter')
+        pydirectinput.keyDown('enter')
         print("Se presiona Enter")
-        time.sleep(2) 
-        print("Se esperan 2 segundos...")
+        time.sleep(0.5) 
+        pydirectinput.keyUp('enter')
+        print("Se esperan 1 segundos...")
+        time.sleep(1)
         pydirectinput.keyDown('ctrl')
         pydirectinput.press('v')
         pydirectinput.keyUp('ctrl')
@@ -96,12 +104,11 @@ def handle_reset(window_title):
         print("Se escribe 'mreset'...")
         for char in "mreset":
             pydirectinput.press(char)
-        pydirectinput.press('enter')
+        pydirectinput.keyDown('enter')
         print("Se presiona Enter de nuevo.")
-        pydirectinput.press('enter')
-        print("Se presiona Enter")
-        time.sleep(2) 
-        print("Se esperan 2 segundos...")
+        pydirectinput.keyUp('enter')
+        time.sleep(1) 
+        print("Se esperan 1 segundo...")
         pydirectinput.keyDown('ctrl')
         pydirectinput.press('v')
         pydirectinput.keyUp('ctrl')
@@ -109,7 +116,9 @@ def handle_reset(window_title):
         print("Se escribe 'reset'...")
         for char in "reset":
             pydirectinput.press(char)
-        pydirectinput.press('enter')
+        pydirectinput.keyDown('enter')
+        time.sleep(0.5)
+        pydirectinput.keyUp('enter')
         print("Se presiona Enter de nuevo.")
     else:
         return handle_master_reset(window_title)
