@@ -69,8 +69,6 @@ def handle_master_reset(window_title):
     print("Se presiona Enter")
     time.sleep(0.5) 
     pydirectinput.keyUp('enter')
-    print("Se esperan 1 segundo...")
-    time.sleep(1)
     pydirectinput.keyDown('ctrl')
     pydirectinput.press('v')
     pydirectinput.keyUp('ctrl')
@@ -83,7 +81,6 @@ def handle_master_reset(window_title):
     time.sleep(0.5)
     pydirectinput.keyUp('enter')
     print("Se presiona Enter de nuevo.")
-    time.sleep(0.5)
 
 def handle_reset(window_title):
     """Perform the reset actions."""
@@ -95,8 +92,6 @@ def handle_reset(window_title):
         print("Se presiona Enter")
         time.sleep(0.5) 
         pydirectinput.keyUp('enter')
-        print("Se esperan 1 segundos...")
-        time.sleep(1)
         pydirectinput.keyDown('ctrl')
         pydirectinput.press('v')
         pydirectinput.keyUp('ctrl')
@@ -106,9 +101,8 @@ def handle_reset(window_title):
             pydirectinput.press(char)
         pydirectinput.keyDown('enter')
         print("Se presiona Enter de nuevo.")
+        time.sleep(0.5)
         pydirectinput.keyUp('enter')
-        time.sleep(1) 
-        print("Se esperan 1 segundo...")
         pydirectinput.keyDown('ctrl')
         pydirectinput.press('v')
         pydirectinput.keyUp('ctrl')
@@ -140,7 +134,10 @@ while True:
             has_reset_condition(window_title, number_level)
             parts = window_title.split(" || ")
             level_part = next(part for part in parts if part.strip().startswith('Level'))
-            print(Fore.GREEN + Style.BRIGHT + f"Nivel actual muy bajo: {level_part}." + Fore.RED + Style.BRIGHT + " Se requiere lvl 380." + Style.RESET_ALL)
+            print(Fore.GREEN + Style.BRIGHT + f"Analizando nivel: {level_part}." + Fore.RED + Style.BRIGHT + " Se requiere lvl 380." + Style.RESET_ALL)
+            print()
+            reset_part = next(part for part in parts if part.strip().startswith('Reset'))  
+            print(Fore.GREEN + Style.BRIGHT + f"Analizando reset: {reset_part}." + Fore.RED + Style.BRIGHT + " Se requiere lvl 10." + Style.RESET_ALL)
             print()
             pass            
             
