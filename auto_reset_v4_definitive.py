@@ -93,7 +93,7 @@ while True:
                 except Exception as e:
                     print(f"Error during reset: {e}")
 
-            elif 380 <= level <= 400 and 10 <= reset <= 50:
+            elif 380 <= level <= 400 and reset <= 50:
                 print(f"Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}")
                 # realiza el master reset
                 try:
