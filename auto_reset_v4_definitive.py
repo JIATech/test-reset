@@ -5,6 +5,10 @@ import pydirectinput
 import time
 import pyperclip
 import pygetwindow as gw
+from colorama import Fore, Style, init
+
+# Initialize colorama for colored output
+init()
 
 def run_as_admin():
     """Elevate script privileges if needed."""
@@ -21,18 +25,18 @@ if ctypes.windll.shell32.IsUserAnAdmin() == 0:
     print("Requiring admin status...")
     run_as_admin()
 else:
-    print("Running with admin privileges. The power is mine.")
+    print(f"{Fore.GREEN}Running with admin privileges. The power is mine.{Style.RESET_ALL}")
 
 def get_window_title_by_keywords(keywords):
     """Find window titles containing all specified keywords."""
-    print(f"Searching for window.")
+    print(f"{Fore.YELLOW}Searching for window.{Style.RESET_ALL}")
     windows = gw.getAllWindows()
     matching_windows = [window for window in windows if all(keyword.lower() in window.title.lower() for keyword in keywords)]
-    print(f"Found {len(matching_windows)} matching window(s).")
+    print(f"{Fore.YELLOW}Found {len(matching_windows)} matching window(s).{Style.RESET_ALL}")
     return [window.title for window in matching_windows]
 
 window_titles = get_window_title_by_keywords(['Character', 'Level'])
-print(f"{window_titles}")
+print(f"{Fore.CYAN}{window_titles}{Style.RESET_ALL}")
 
 def extract_level_reset_and_name(window_title):
     """Extracts level, reset numbers and character name from a window title."""
@@ -54,7 +58,7 @@ while True:
                 'reset': reset,
                 'name': character_name
             }
-            print(f"Window {index + 1}: Name: {character_name}, Level: {level}, Reset: {reset}")
+            print(f"{Fore.BLUE}Window {index + 1}: Name: {character_name}, Level: {level}, Reset: {reset}{Style.RESET_ALL}")
 
         for i in range(1, len(window_titles)+1):
             window_info = windows_info[f'window_{i}']
@@ -64,7 +68,7 @@ while True:
             character_name = window_info['name']
 
             if 381 <= level <= 400:
-                print(f"Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}")
+                print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
                 # realiza el reset
                 try:
                     window = gw.getWindowsWithTitle(window_title)[0]
@@ -87,14 +91,14 @@ while True:
                     pydirectinput.press('enter')
                     pydirectinput.press('enter')
                     time.sleep(0.5)
-                    print("Reset completed.")
+                    print(f"{Fore.GREEN}Reset completed.{Style.RESET_ALL}")
                 except IndexError:
-                    print(f"Error: Window '{window_title}' not found.")
+                    print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
                 except Exception as e:
-                    print(f"Error during reset: {e}")
+                    print(f"{Fore.RED}Error during reset: {e}{Style.RESET_ALL}")
 
-            elif 380 <= level <= 400 and reset <= 50:
-                print(f"Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}")
+            elif 380 <= level <= 400 and reset >= 50:
+                print(f"{Fore.GREEN}Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
                 # realiza el master reset
                 try:
                     window = gw.getWindowsWithTitle(window_title)[0]
@@ -116,18 +120,18 @@ while True:
                     pydirectinput.press('enter')
                     pydirectinput.press('enter')
                     time.sleep(0.5)
-                    print("Master reset completed.")
+                    print(f"{Fore.GREEN}Master reset completed.{Style.RESET_ALL}")
                 except IndexError:
-                    print(f"Error: Window '{window_title}' not found.")
+                    print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
                 except pydirectinput.PyDirectInputException as e:
-                    print(f"Error during keyboard input: {e}")
+                    print(f"{Fore.RED}Error during keyboard input: {e}{Style.RESET_ALL}")
                 except Exception as e:
-                    print(f"Error during reset: {e}")
+                    print(f"{Fore.RED}Error during reset: {e}{Style.RESET_ALL}")
 
             else:
-                print(f"Conditions for reset are not met in window_{i} for {character_name}.")
+                print(f"{Fore.YELLOW}Conditions for reset are not met in window_{i} for {character_name} (L: {level}, R: {reset}).{Style.RESET_ALL}")
         
     else:
-        print("No matching window(s) found.")
+        print(f"{Fore.YELLOW}No matching window(s) found.{Style.RESET_ALL}")
     
     time.sleep(5)  # Wait for 5 seconds before checking again
