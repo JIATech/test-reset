@@ -63,7 +63,7 @@ while True:
             window_title = window_info['title']
             character_name = window_info['name']
 
-            if 382 <= level <= 400:
+            if 381 <= level <= 400:
                 print(f"Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}")
                 # realiza el reset
                 try:
