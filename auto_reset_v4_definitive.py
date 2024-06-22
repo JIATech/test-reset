@@ -10,7 +10,7 @@ def run_as_admin():
     """Elevate script privileges if needed."""
     if sys.platform.startswith('win'):
         try:
-            print("Probando privilegios...")
+            print("Testing privileges...")
             script_path = os.path.abspath(sys.argv[0])
             ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, script_path, None, 1)
             sys.exit()
@@ -18,27 +18,28 @@ def run_as_admin():
             print(f"Failed to run as admin: {e}")
 
 if ctypes.windll.shell32.IsUserAnAdmin() == 0:
-    print("Requiriendo status de admin...")
+    print("Requiring admin status...")
     run_as_admin()
 else:
-    print("Corriendo con privilegios de admin. El poder el mío.")
+    print("Running with admin privileges. The power is mine.")
 
 def get_window_title_by_keywords(keywords):
     """Find window titles containing all specified keywords."""
-    print(f"Buscando ventana.")
+    print(f"Searching for window.")
     windows = gw.getAllWindows()
     matching_windows = [window for window in windows if all(keyword.lower() in window.title.lower() for keyword in keywords)]
-    print(f"Se encontró {len(matching_windows)} coincidencia/s.")
+    print(f"Found {len(matching_windows)} matching window(s).")
     return [window.title for window in matching_windows]
 
 window_titles = get_window_title_by_keywords(['Character', 'Level'])
 print(f"{window_titles}")
 
-def extract_level_and_reset(window_title):
-    """Extracts level and reset numbers from a window title."""
+def extract_level_reset_and_name(window_title):
+    """Extracts level, reset numbers and character name from a window title."""
+    character_name = window_title.split("Character : ")[1].split(" ||")[0]
     level_number = int(window_title.split("Level: ")[1].split(" ||")[0])
     reset_number = int(window_title.split("Reset: ")[1].split(" ||")[0])
-    return level_number, reset_number
+    return level_number, reset_number, character_name
 
 while True:
     window_titles = get_window_title_by_keywords(['Character', 'Level'])
@@ -46,22 +47,24 @@ while True:
     if window_titles:
         windows_info = {}
         for index, window_title in enumerate(window_titles):
-            level, reset = extract_level_and_reset(window_title)
+            level, reset, character_name = extract_level_reset_and_name(window_title)
             windows_info[f'window_{index + 1}'] = {
                 'title': window_title,
                 'level': level,
-                'reset': reset
+                'reset': reset,
+                'name': character_name
             }
-            print(f"Window {index + 1}: Level: {level}, Reset: {reset}")
+            print(f"Window {index + 1}: Name: {character_name}, Level: {level}, Reset: {reset}")
 
         for i in range(1, len(window_titles)+1):
             window_info = windows_info[f'window_{i}']
             level = window_info['level']
             reset = window_info['reset']
             window_title = window_info['title']
+            character_name = window_info['name']
 
             if 382 <= level <= 400:
-                print(f"Condiciones para reset se cumplen en window_{i}.\nLevel: {level}")
+                print(f"Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}")
                 # realiza el reset
                 try:
                     window = gw.getWindowsWithTitle(window_title)[0]
@@ -84,14 +87,14 @@ while True:
                     pydirectinput.press('enter')
                     pydirectinput.press('enter')
                     time.sleep(0.5)
-                    print("Reset completado.")
+                    print("Reset completed.")
                 except IndexError:
                     print(f"Error: Window '{window_title}' not found.")
                 except Exception as e:
                     print(f"Error during reset: {e}")
 
             elif 380 <= level <= 400 and 10 <= reset <= 50:
-                print(f"Condiciones para master reset se cumplen en window_{i}.\nLevel: {level} Reset: {reset}")
+                print(f"Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}")
                 # realiza el master reset
                 try:
                     window = gw.getWindowsWithTitle(window_title)[0]
@@ -113,7 +116,7 @@ while True:
                     pydirectinput.press('enter')
                     pydirectinput.press('enter')
                     time.sleep(0.5)
-                    print("Master reset completado.")
+                    print("Master reset completed.")
                 except IndexError:
                     print(f"Error: Window '{window_title}' not found.")
                 except pydirectinput.PyDirectInputException as e:
@@ -122,9 +125,9 @@ while True:
                     print(f"Error during reset: {e}")
 
             else:
-                print(f"Condiciones para reset no se cumplen en window_{i}.")
+                print(f"Conditions for reset are not met in window_{i} for {character_name}.")
         
     else:
-        print("No se encontraron ventanas con los keywords.")
+        print("No matching window(s) found.")
     
     time.sleep(5)  # Wait for 5 seconds before checking again
