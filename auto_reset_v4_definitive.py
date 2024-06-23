@@ -65,17 +65,13 @@ def info_to_show():
         
         return level, reset, character_name
 
-non_vip_characters = ["UnMago", "UnGuerrero", "UnaElfa"]
-
 def are_we_there_yet(level, reset, character_name, i):
     """Check if a window title matches the reset condition."""
-
+    
     conditions = {
-        "mreset": lambda level, reset: 381 <= level <= 400 and reset == 50,
-        "reset": lambda level, reset: 380 <= level <= 400 and reset <= 50,
-        "intermediate": lambda level, reset: level < 380 and reset < 50,
-        "non_vip_reset": lambda level, reset: level == 400 and reset < 50,
-        "non_vip_master_reset": lambda level, reset: level == 400 and reset == 50
+        "mreset": lambda level, reset: 381 <= level <= 400 and reset == 50 and level != 400,
+        "reset": lambda level, reset: 380 <= level <= 400 and reset <= 50 and level != 400,
+        "intermediate": lambda level, reset: level < 380 and reset < 50
     }
 
 
@@ -87,12 +83,6 @@ def are_we_there_yet(level, reset, character_name, i):
             elif condition == "reset":
                 print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
                 return "reset"
-            elif condition == "non_vip_reset":
-                print(f"{Fore.GREEN}Conditions for non-vip reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
-                return "poor_reset"
-            elif condition == "non_vip_master_reset":
-                print(f"{Fore.GREEN}Conditions for non-vip master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
-                return "poor_mreset"
             elif condition == "intermediate":
                 print(f"{Fore.YELLOW}Conditions not fully met for any reset in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
                 return None
@@ -121,10 +111,11 @@ def perform_reset(window_title, cmd, character_name, i):
             pydirectinput.keyUp(char)
         time.sleep(0.5)
         pydirectinput.press('enter')
-        pydirectinput.press('enter')
         time.sleep(0.5)
+        pydirectinput.keyDown('enter')
+        time.sleep(1.5)
+        pydirectinput.keyUp('enter')
         pydirectinput.press('enter')
-        time.sleep(0.5)
         print(print_statement())
     except IndexError:
         print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
@@ -159,18 +150,17 @@ while True:
             try:
                 cmd = are_we_there_yet(level, reset, character_name, i)
                 if cmd:  # Ensure cmd is not None
-                    if "mreset" in cmd:
+                    if 'UnMago' in character_name:
+                        # do nothing
+                        pass
+                    elif "mreset" in cmd and 'UnMago' or 'UnGuerrero' or 'UnaElfa' not in character_name:
                         # Perform the master reset
                         perform_reset(window_title, cmd, character_name, i)
-                    elif "reset" in cmd:
+                    elif "reset" in cmd and 'UnMago' or 'UnGuerrero' or 'UnaElfa' not in character_name:
                         # Perform the reset
                         perform_reset(window_title, "reset", character_name, i)
-                    elif "poor_reset" in cmd:
-                        # Perform the reset
-                        perform_reset(window_title, "reset", character_name, i)
-                    elif "poor_mreset" in cmd:
-                        # Perform the master reset
-                        perform_reset(window_title, "mreset", character_name, i)
+                    elif "intermediate" in cmd:
+                        print(f"{Fore.YELLOW}Conditions not fully met for any reset in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
                     else:
                         print(f"{Fore.RED}Error: Unknown command '{cmd}' for window_{i} for {character_name}.{Style.RESET_ALL}")
                 else:
@@ -178,7 +168,15 @@ while True:
             except Exception as e:
                 print(f"{Fore.RED}An error occurred: {e}.{Style.RESET_ALL}")
             finally:
-                # Any cleanup code can go here
+                if 'UnMago' in character_name:
+                    if level == 400:
+                        print(f"{Fore.GREEN}UnMago is at level 400. Performing a reset.{Style.RESET_ALL}")
+                        perform_reset(window_title, "reset", character_name, i)
+                    elif level == 400 and reset == 50:
+                        print(f"{Fore.GREEN}UnMago is at level 400 and reset 50. Performing a master reset.{Style.RESET_ALL}")
+                        perform_reset(window_title, "mreset", character_name, i)
+                    else:
+                        pass
                 pass
 
     time.sleep(5)  # Wait for 5 seconds before checking again
