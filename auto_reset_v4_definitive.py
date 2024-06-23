@@ -69,18 +69,29 @@ non_vip_characters = ["UnMago", "UnGuerrero", "UnaElfa"]
 
 def are_we_there_yet(level, reset, character_name, i):
     """Check if a window title matches the reset condition."""
-    if 381 <= level <= 400 and reset == 50:  # Master reset condition
-        print(f"{Fore.GREEN}Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
-        return "mreset"
-    elif 380 <= level <= 400 and reset > 50:  # Regular reset condition after master reset
-        print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
-        return "reset"
-    elif level < 380 and reset < 50:  # Intermediate levels not ready for reset
-        print(f"{Fore.YELLOW}Conditions not fully met for any reset in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
-        return None
-    else:
-        print(f"{Fore.YELLOW}Conditions for reset are not met in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
-        return None
+
+    conditions = {
+        "mreset": lambda level, reset: 381 <= level <= 400 and reset == 50,
+        "reset": lambda level, reset: 380 <= level <= 400 and reset <= 50,
+        "intermediate": lambda level, reset: level < 380 and reset < 50
+    }
+
+
+    for condition, check in conditions.items():
+        if check(level, reset):
+            if condition == "mreset":
+                print(f"{Fore.GREEN}Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
+                return "mreset"
+            elif condition == "reset":
+                print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
+                return "reset"
+            elif condition == "intermediate":
+                print(f"{Fore.YELLOW}Conditions not fully met for any reset in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
+                return None
+
+    # Default case
+    print(f"{Fore.YELLOW}Conditions for reset are not met in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
+    return None
 
 def perform_reset(window_title, cmd, character_name, i):
     print_statement = lambda: f"{Fore.GREEN}{cmd.capitalize()} performed in window_{i} for {character_name}.{Style.RESET_ALL}"
@@ -102,10 +113,10 @@ def perform_reset(window_title, cmd, character_name, i):
             pydirectinput.keyUp(char)
         time.sleep(0.5)
         pydirectinput.press('enter')
-        time.sleep(0.5)
         pydirectinput.press('enter')
         time.sleep(0.5)
         pydirectinput.press('enter')
+        time.sleep(0.5)
         print(print_statement())
     except IndexError:
         print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
