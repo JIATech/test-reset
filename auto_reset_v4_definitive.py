@@ -73,7 +73,9 @@ def are_we_there_yet(level, reset, character_name, i):
     conditions = {
         "mreset": lambda level, reset: 381 <= level <= 400 and reset == 50,
         "reset": lambda level, reset: 380 <= level <= 400 and reset <= 50,
-        "intermediate": lambda level, reset: level < 380 and reset < 50
+        "intermediate": lambda level, reset: level < 380 and reset < 50,
+        "non_vip_reset": lambda level, reset: level == 400 and reset < 50,
+        "non_vip_master_reset": lambda level, reset: level == 400 and reset == 50
     }
 
 
@@ -85,6 +87,12 @@ def are_we_there_yet(level, reset, character_name, i):
             elif condition == "reset":
                 print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
                 return "reset"
+            elif condition == "non_vip_reset":
+                print(f"{Fore.GREEN}Conditions for non-vip reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
+                return "poor_reset"
+            elif condition == "non_vip_master_reset":
+                print(f"{Fore.GREEN}Conditions for non-vip master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
+                return "poor_mreset"
             elif condition == "intermediate":
                 print(f"{Fore.YELLOW}Conditions not fully met for any reset in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
                 return None
@@ -98,7 +106,7 @@ def perform_reset(window_title, cmd, character_name, i):
     try:
         window = gw.getWindowsWithTitle(window_title)[0]
         window.activate()
-        time.sleep(0.5)
+        time.sleep(1)
         pydirectinput.press('enter')
         time.sleep(0.5)
 
@@ -141,16 +149,36 @@ while True:
             }
             print(f"{Fore.BLUE}Window {index + 1}: Name: {character_name}, Level: {level}, Reset: {reset}{Style.RESET_ALL}")
 
-        for i in range(1, len(window_titles)+1):
+        for i in range(1, len(window_titles) + 1):
             window_info = windows_info[f'window_{i}']
             level = window_info['level']
             reset = window_info['reset']
             window_title = window_info['title']
             character_name = window_info['name']
 
-            cmd = are_we_there_yet(level, reset, character_name, i)
-            if cmd:
-                # Perform the reset or master reset
-                perform_reset(window_title, cmd, character_name, i)
+            try:
+                cmd = are_we_there_yet(level, reset, character_name, i)
+                if cmd:  # Ensure cmd is not None
+                    if "mreset" in cmd:
+                        # Perform the master reset
+                        perform_reset(window_title, cmd, character_name, i)
+                    elif "reset" in cmd:
+                        # Perform the reset
+                        perform_reset(window_title, "reset", character_name, i)
+                    elif "poor_reset" in cmd:
+                        # Perform the reset
+                        perform_reset(window_title, "reset", character_name, i)
+                    elif "poor_mreset" in cmd:
+                        # Perform the master reset
+                        perform_reset(window_title, "mreset", character_name, i)
+                    else:
+                        print(f"{Fore.RED}Error: Unknown command '{cmd}' for window_{i} for {character_name}.{Style.RESET_ALL}")
+                else:
+                    print(f"{Fore.YELLOW}No valid command for window_{i} for {character_name}.{Style.RESET_ALL}")
+            except Exception as e:
+                print(f"{Fore.RED}An error occurred: {e}.{Style.RESET_ALL}")
+            finally:
+                # Any cleanup code can go here
+                pass
 
     time.sleep(5)  # Wait for 5 seconds before checking again
