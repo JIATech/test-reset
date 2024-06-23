@@ -105,6 +105,7 @@ while True:
                     try:
                         window = gw.getWindowsWithTitle(window_title)[0]
                         window.activate()
+                        time.sleep(0.5)
 
                         pydirectinput.press('enter')
                         time.sleep(0.5)
@@ -118,10 +119,12 @@ while True:
                             pydirectinput.keyDown(char)
                             time.sleep(0.1)
                             pydirectinput.keyUp(char)
-                        pydirectinput.press('enter')
-                        pydirectinput.press('enter')
+                        time.sleep(0.5)
                         pydirectinput.press('enter')
                         time.sleep(0.5)
+                        pydirectinput.press('enter')
+                        time.sleep(0.5)
+                        pydirectinput.press('enter')
                         print(f"{Fore.GREEN}Master reset completed.{Style.RESET_ALL}")
                     except IndexError:
                         print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
@@ -129,12 +132,13 @@ while True:
                         print(f"{Fore.RED}Error during keyboard input: {e}{Style.RESET_ALL}")
                     except Exception as e:
                         print(f"{Fore.RED}Error during reset: {e}{Style.RESET_ALL}")
-                elif level == 400:
+                elif level == 400 and reset > 50:
                     print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
                     # realiza el reset
                     try:
                         window = gw.getWindowsWithTitle(window_title)[0]
                         window.activate()
+                        time.sleep(0.5)
 
                         pydirectinput.press('enter')
                         time.sleep(0.5)
@@ -149,21 +153,24 @@ while True:
                             pydirectinput.keyDown(char)
                             time.sleep(0.1)
                             pydirectinput.keyUp(char)
-                        pydirectinput.press('enter')
-                        pydirectinput.press('enter')
+                        time.sleep(0.5)
                         pydirectinput.press('enter')
                         time.sleep(0.5)
+                        pydirectinput.press('enter')
+                        time.sleep(0.5)
+                        pydirectinput.press('enter')
                         print(f"{Fore.GREEN}Reset completed.{Style.RESET_ALL}")
                     except IndexError:
                         print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
                     except Exception as e:
                         print(f"{Fore.RED}Error during reset: {e}{Style.RESET_ALL}")
-            elif 381 <= level <= 400:
+            elif 381 <= level <= 400 and reset > 50:
                 print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
                 # realiza el reset
                 try:
                     window = gw.getWindowsWithTitle(window_title)[0]
                     window.activate()
+                    time.sleep(0.5)
 
                     pydirectinput.press('enter')
                     time.sleep(0.5)
@@ -178,10 +185,12 @@ while True:
                         pydirectinput.keyDown(char)
                         time.sleep(0.1)
                         pydirectinput.keyUp(char)
-                    pydirectinput.press('enter')
-                    pydirectinput.press('enter')
+                    time.sleep(0.5)
                     pydirectinput.press('enter')
                     time.sleep(0.5)
+                    pydirectinput.press('enter')
+                    time.sleep(0.5)
+                    pydirectinput.press('enter')
                     print(f"{Fore.GREEN}Reset completed.{Style.RESET_ALL}")
                 except IndexError:
                     print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
@@ -194,7 +203,8 @@ while True:
                 try:
                     window = gw.getWindowsWithTitle(window_title)[0]
                     window.activate()
-
+                    time.sleep(0.5)
+                    
                     pydirectinput.press('enter')
                     time.sleep(0.5)
 
@@ -207,10 +217,12 @@ while True:
                         pydirectinput.keyDown(char)
                         time.sleep(0.1)
                         pydirectinput.keyUp(char)
-                    pydirectinput.press('enter')
-                    pydirectinput.press('enter')
+                    time.sleep(0.5)
                     pydirectinput.press('enter')
                     time.sleep(0.5)
+                    pydirectinput.press('enter')
+                    time.sleep(0.5)
+                    pydirectinput.press('enter')
                     print(f"{Fore.GREEN}Master reset completed.{Style.RESET_ALL}")
                 except IndexError:
                     print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
