@@ -45,6 +45,37 @@ def extract_level_reset_and_name(window_title):
     reset_number = int(window_title.split("Reset: ")[1].split(" ||")[0])
     return level_number, reset_number, character_name
 
+def are_we_there_yet(level_number, reset_number, character_name):
+    """Check if a window title matches the reset condition."""
+    if level_number == range(380, 401):
+        print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
+    elif level_number == range(380, 401) and reset_number == range(10, 50):
+        print(f"{Fore.GREEN}Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
+    else:
+        print(f"{Fore.YELLOW}Conditions for reset are not met in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
+
+def info_to_show():
+        windows_info = {}
+        for index, window_title in enumerate(window_titles):
+            level, reset, character_name = extract_level_reset_and_name(window_title)
+            windows_info[f'window_{index + 1}'] = {
+                'title': window_title,
+                'level': level,
+                'reset': reset,
+                'name': character_name
+            }
+
+        for i in range(1, len(window_titles)+1):
+            window_info = windows_info[f'window_{i}']
+            level = window_info['level']
+            reset = window_info['reset']
+            window_title = window_info['title']
+            character_name = window_info['name']
+        
+        return level, reset, character_name
+
+non_vip_characters = ["UnMago", "UnGuerrero", "UnaElfa"]
+
 while True:
     window_titles = get_window_title_by_keywords(['Character', 'Level'])
     
@@ -67,7 +98,67 @@ while True:
             window_title = window_info['title']
             character_name = window_info['name']
 
-            if 381 <= level <= 400:
+            if character_name in non_vip_characters:
+                if level == 400 and reset == 50:
+                    print(f"{Fore.GREEN}Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
+                    # realiza el master reset
+                    try:
+                        window = gw.getWindowsWithTitle(window_title)[0]
+                        window.activate()
+
+                        pydirectinput.press('enter')
+                        time.sleep(0.5)
+
+                        pyperclip.copy("/")
+                        pydirectinput.keyDown('ctrl')
+                        pydirectinput.press('v')
+                        pydirectinput.keyUp('ctrl')
+
+                        for char in "mreset":
+                            pydirectinput.keyDown(char)
+                            time.sleep(0.1)
+                            pydirectinput.keyUp(char)
+                        pydirectinput.press('enter')
+                        pydirectinput.press('enter')
+                        pydirectinput.press('enter')
+                        time.sleep(0.5)
+                        print(f"{Fore.GREEN}Master reset completed.{Style.RESET_ALL}")
+                    except IndexError:
+                        print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
+                    except pydirectinput.PyDirectInputException as e:
+                        print(f"{Fore.RED}Error during keyboard input: {e}{Style.RESET_ALL}")
+                    except Exception as e:
+                        print(f"{Fore.RED}Error during reset: {e}{Style.RESET_ALL}")
+                elif level == 400:
+                    print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
+                    # realiza el reset
+                    try:
+                        window = gw.getWindowsWithTitle(window_title)[0]
+                        window.activate()
+
+                        pydirectinput.press('enter')
+                        time.sleep(0.5)
+
+                        # Enter reset commands with keyDown/keyUp for reliability
+                        pyperclip.copy("/")
+                        pydirectinput.keyDown('ctrl')
+                        pydirectinput.press('v')
+                        pydirectinput.keyUp('ctrl')
+
+                        for char in "reset":
+                            pydirectinput.keyDown(char)
+                            time.sleep(0.1)
+                            pydirectinput.keyUp(char)
+                        pydirectinput.press('enter')
+                        pydirectinput.press('enter')
+                        pydirectinput.press('enter')
+                        time.sleep(0.5)
+                        print(f"{Fore.GREEN}Reset completed.{Style.RESET_ALL}")
+                    except IndexError:
+                        print(f"{Fore.RED}Error: Window '{window_title}' not found.{Style.RESET_ALL}")
+                    except Exception as e:
+                        print(f"{Fore.RED}Error during reset: {e}{Style.RESET_ALL}")
+            elif 381 <= level <= 400:
                 print(f"{Fore.GREEN}Conditions for reset are met in window_{i} for {character_name}.\nLevel: {level}{Style.RESET_ALL}")
                 # realiza el reset
                 try:
@@ -129,9 +220,9 @@ while True:
                     print(f"{Fore.RED}Error during reset: {e}{Style.RESET_ALL}")
 
             else:
-                print(f"{Fore.YELLOW}Conditions for reset are not met in window_{i} for {character_name} (L: {level}, R: {reset}).{Style.RESET_ALL}")
-        
-    else:
-        print(f"{Fore.YELLOW}No matching window(s) found.{Style.RESET_ALL}")
-    
+                info_to_show()
+
+        # else:
+        #     print(f"{Fore.YELLOW}No matching window(s) found.{Style.RESET_ALL}")
+            
     time.sleep(5)  # Wait for 5 seconds before checking again
