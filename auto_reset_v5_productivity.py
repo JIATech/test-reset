@@ -169,7 +169,7 @@ while True:
                 print(f"{Fore.RED}An error occurred: {e}.{Style.RESET_ALL}")
             finally:
                 if 'UnMago' in character_name:
-                    if level == 400:
+                    if level == 400 and not reset == 10:
                         print(f"{Fore.GREEN}UnMago is at level 400. Performing a reset.{Style.RESET_ALL}")
                         perform_reset(window_title, "reset", character_name, i)
                     elif level == 400 and reset == 10:
