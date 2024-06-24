@@ -4,3 +4,4 @@ reference_image.png
 temp_screenshot.png
 errors.log
 *.spec
+dist

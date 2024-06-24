@@ -69,9 +69,9 @@ def are_we_there_yet(level, reset, character_name, i):
     """Check if a window title matches the reset condition."""
     
     conditions = {
-        "mreset": lambda level, reset: 381 <= level <= 400 and reset == 50 and level != 400,
-        "reset": lambda level, reset: 380 <= level <= 400 and reset <= 50 and level != 400,
-        "intermediate": lambda level, reset: level < 380 and reset < 50
+        "mreset": lambda level, reset: 381 <= level <= 400 and reset >= 10 and level != 400,
+        "reset": lambda level, reset: 380 <= level <= 400 and reset <= 10 and level != 400,
+        "intermediate": lambda level, reset: level < 380 and reset < 10
     }
 
 
@@ -179,4 +179,7 @@ while True:
                         pass
                 pass
 
-    time.sleep(5)  # Wait for 5 seconds before checking again
+    time.sleep(5)  # Wait for 5 seconds before checking againset
+    
+    
+    
