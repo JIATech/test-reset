@@ -35,19 +35,28 @@ def get_window_title_by_keywords(keywords):
     print(f"{Fore.YELLOW}Found {len(matching_windows)} matching window(s).{Style.RESET_ALL}")
     return [window.title for window in matching_windows]
 
-window_titles = get_window_title_by_keywords(['Character', 'Level'])
+window_titles = get_window_title_by_keywords(['Level', 'Resets'])
 print(f"{Fore.CYAN}{window_titles}{Style.RESET_ALL}")
 
 def extract_level_reset_and_name(window_title):
     """Extracts level, reset numbers and character name from a window title."""
-    character_name = window_title.split("Character : ")[1].split(" ||")[0]
-    level_number = int(window_title.split("Level: ")[1].split(" ||")[0])
-    reset_number = int(window_title.split("Reset: ")[1].split(" ||")[0])
+    # Remove the "MU" prefix if present
+    window_title = window_title.replace("MU ", "")
+
+    # Split the title based on the correct separators
+    parts = window_title.split(" - ")
+    character_name = parts[1].split(" / ")[0]
+    level_number = int(parts[1].split("Level: ")[1].split(" / ")[0])
+    reset_number = int(parts[1].split("Resets: ")[1].split(" / ")[0])
+    character_name = character_name.replace(" ", "")
     return level_number, reset_number, character_name
+
+window_data = extract_level_reset_and_name(window_titles[0])
+print(window_data)
 
 def info_to_show():
         windows_info = {}
-        for index, window_title in enumerate(window_titles):
+        for index, window_title in enumerate(window_titles[0]):
             level, reset, character_name = extract_level_reset_and_name(window_title)
             windows_info[f'window_{index + 1}'] = {
                 'title': window_title,
@@ -56,7 +65,7 @@ def info_to_show():
                 'name': character_name
             }
 
-        for i in range(1, len(window_titles)+1):
+        for i in range(1, len(window_titles[0])+1):
             window_info = windows_info[f'window_{i}']
             level = window_info['level']
             reset = window_info['reset']
@@ -69,15 +78,23 @@ def are_we_there_yet(level, reset, character_name, i):
     """Check if a window title matches the reset condition."""
     
     conditions = {
-        "mreset": lambda level, reset: 381 <= level <= 400 and reset >= 10 and level != 400,
-        "reset": lambda level, reset: 380 <= level <= 400 and reset <= 10 and level != 400,
-        "intermediate": lambda level, reset: level < 380 and reset < 10
+        "mreset": lambda level, reset, _: level >= 400 and reset >= 10,
+        "reset": lambda level, reset, _: level >= 400 and reset <= 10,
+        "intermediate": lambda level, reset, _: level < 380 and reset < 10,
+        "special_reset": lambda level, reset, character_name: character_name in ["JohnTheWiz", "JohnTheBK", "UnaElfa"] and level == 380 and reset >= 10,
+        "special_mreset": lambda level, reset, character_name: character_name in ["JohnTheWiz", "JohnTheBK", "UnaElfa"] and level == 380 and reset == 10,
     }
 
 
     for condition, check in conditions.items():
-        if check(level, reset):
-            if condition == "mreset":
+        if check(level, reset, character_name):
+            if condition == "special_reset":
+                print(f"{Fore.GREEN}Conditions for vip reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
+                return "special_reset"
+            elif condition == "special_mreset":
+                print(f"{Fore.GREEN}Conditions for vip master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
+                return "special_mreset"
+            elif condition == "mreset":
                 print(f"{Fore.GREEN}Conditions for master reset are met in window_{i} for {character_name}.\nLevel: {level} Reset: {reset}{Style.RESET_ALL}")
                 return "mreset"
             elif condition == "reset":
@@ -126,7 +143,7 @@ def perform_reset(window_title, cmd, character_name, i):
 
 # Main Loop
 while True:
-    window_titles = get_window_title_by_keywords(['Character', 'Level'])
+    window_titles = get_window_title_by_keywords(['Level', 'Resets'])
 
     if window_titles:
         windows_info = {}
@@ -149,37 +166,69 @@ while True:
 
             try:
                 cmd = are_we_there_yet(level, reset, character_name, i)
+                print(f"{Style.DIM}{Fore.YELLOW}__________________________________________________{Style.RESET_ALL}")
+                print(f"{cmd}")
+                print(f"{Style.DIM}{Fore.YELLOW}__________________________________________________{Style.RESET_ALL}")
                 if cmd:  # Ensure cmd is not None
-                    if 'UnMago' in character_name:
+                    if 'JohnTheWiz' in character_name:
                         # do nothing
                         pass
-                    elif "mreset" in cmd and 'UnMago' or 'UnGuerrero' or 'UnaElfa' not in character_name:
-                        # Perform the master reset
-                        perform_reset(window_title, cmd, character_name, i)
-                    elif "reset" in cmd and 'UnMago' or 'UnGuerrero' or 'UnaElfa' not in character_name:
+                    elif "reset" in cmd and 'JohnTheWiz' or 'JohnTheBK' or 'UnaElfa' not in character_name:
                         # Perform the reset
+                        print(f"{Fore.GREEN}Performing a reset.{Style.RESET_ALL}")
                         perform_reset(window_title, "reset", character_name, i)
+                    elif "mreset" in cmd and 'JohnTheWiz' or 'JohnTheBK' or 'UnaElfa' not in character_name:
+                        # Perform the master reset
+                        print(f"{Fore.GREEN}Performing a master reset.{Style.RESET_ALL}")
+                        perform_reset(window_title, cmd, character_name, i)
+                    elif "special_reset":
+                        # Perform the special reset
+                        print(f"{Fore.GREEN}Performing a special reset.{Style.RESET_ALL}")
+                        perform_reset(window_title, "reset", character_name, i)
+                    elif "special_mreset":
+                        # Perform the special master reset
+                        print(f"{Fore.GREEN}Performing a special master reset.{Style.RESET_ALL}")
+                        perform_reset(window_title, "mreset", character_name, i)
                     elif "intermediate" in cmd:
                         print(f"{Fore.YELLOW}Conditions not fully met for any reset in window_{i} for {character_name} (L:{level}, R:{reset}).{Style.RESET_ALL}")
                     else:
                         print(f"{Fore.RED}Error: Unknown command '{cmd}' for window_{i} for {character_name}.{Style.RESET_ALL}")
                 else:
                     print(f"{Fore.YELLOW}No valid command for window_{i} for {character_name}.{Style.RESET_ALL}")
+                    print(f"{Style.DIM}{Fore.YELLOW}__________________________________________________{Style.RESET_ALL}")
             except Exception as e:
                 print(f"{Fore.RED}An error occurred: {e}.{Style.RESET_ALL}")
             finally:
-                if 'UnMago' in character_name:
-                    if level == 400 and not reset >= 10:
-                        print(f"{Fore.GREEN}UnMago is at level 400. Performing a reset.{Style.RESET_ALL}")
+                if 'JohnTheWiz' in character_name:
+                    if level == 380 and not reset >= 10:
+                        print(f"{Fore.GREEN}JohnTheWiz is at level 380. Performing a reset.{Style.RESET_ALL}")
                         perform_reset(window_title, "reset", character_name, i)
                     elif level == 400 and reset >= 10:
-                        print(f"{Fore.GREEN}UnMago is at level 400 and reset 10. Performing a master reset.{Style.RESET_ALL}")
-                        perform_reset(window_title, "mreset", character_name, i)
+                        print(f"{Fore.GREEN}JohnTheWiz is at level 400 and reset 10. Performing a reset lvl400.{Style.RESET_ALL}")
+                        perform_reset(window_title, "reset", character_name, i)
                     else:
+                        print(f"{Fore.GREEN}JohnTheWiz is at level {level}, needs {400 - level} more levels to reset.{Style.RESET_ALL}")
+                        pass
+                elif 'JohnTheBK' in character_name:
+                    if level == 380 and not reset >= 10:
+                        print(f"{Fore.GREEN}JohnTheBK is at level 380. Performing a reset.{Style.RESET_ALL}")
+                        perform_reset(window_title, "reset", character_name, i)
+                    elif level == 400 and reset >= 10:
+                        print(f"{Fore.GREEN}JohnTheBK is at level 400 and reset 10. Performing a reset lvl400.{Style.RESET_ALL}")
+                        perform_reset(window_title, "reset", character_name, i)
+                    else:
+                        print(f"{Fore.GREEN}JohnTheBK is at level {level}, needs {400 - level} more levels to reset.{Style.RESET_ALL}")
+                        pass
+                elif 'UnaElfa' in character_name:
+                    if level == 380 and not reset >= 10:
+                        print(f"{Fore.GREEN}UnaElfa is at level 380. Performing a reset.{Style.RESET_ALL}")
+                        perform_reset(window_title, "reset", character_name, i)
+                    elif level == 400 and reset >= 10:
+                        print(f"{Fore.GREEN}UnaElfa is at level 400 and reset 10. Performing a reset lvl400.{Style.RESET_ALL}")
+                        perform_reset(window_title, "reset", character_name, i)
+                    else:
+                        print(f"{Fore.GREEN}UnaElfa is at level {level}, needs {400 - level} more levels to reset.{Style.RESET_ALL}")
                         pass
                 pass
 
-    time.sleep(5)  # Wait for 5 seconds before checking againset
-    
-    
-    
+    time.sleep(5)  # Wait for 5 seconds before checking
